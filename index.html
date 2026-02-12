@@ -2,200 +2,845 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <!-- تحسين متقدم للهواتف مع التكبير والتصغير المسموح -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes, viewport-fit=cover">
-    <title>مدير الدار - النظام المالي الذكي | جواد شاهين</title>
+    <title>مدير الدار - النظام الذكي</title>
+    
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cairo:wght@300;400;500;600;700;800&family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
-    <!-- Chart.js و Moment.js محذوفان لأننا لا نستخدمهما بشكل مباشر، لكن نبقي Moment للتاريخ -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Moment.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/locale/ar.js"></script>
-    <!-- ربط ملف CSS الخارجي (style.css) -->
-    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        /* ===== نظام الألوان التنفيذي ===== */
+        :root {
+            --bg-dark: #0a121c;
+            --bg-card: rgba(16, 26, 36, 0.9);
+            --gold: #d4af37;
+            --gold-light: #f1e4b0;
+            --green: #0e7c5a;
+            --red: #b34141;
+            --text-light: #f0f4fa;
+            --text-dim: #a0b3cc;
+            --border-dim: rgba(212, 175, 55, 0.25);
+            --shadow: 0 15px 30px rgba(0,0,0,0.5);
+            --radius: 24px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            background: var(--bg-dark);
+            color: var(--text-light);
+            line-height: 1.5;
+            padding: 12px;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .bg-gradient {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle at 80% 20%, #1e2a3a, #0a121c);
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* ===== الهيدر ===== */
+        .header {
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--border-dim);
+            border-radius: 40px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            box-shadow: var(--shadow);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .crown {
+            background: rgba(212, 175, 55, 0.15);
+            width: 48px;
+            height: 48px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--gold);
+        }
+
+        .crown i {
+            font-size: 28px;
+            color: var(--gold);
+        }
+
+        .title h1 {
+            font-size: 24px;
+            font-weight: 900;
+            color: white;
+            margin-bottom: 2px;
+        }
+
+        .title span {
+            font-size: 11px;
+            color: var(--text-dim);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .datetime {
+            background: rgba(0,0,0,0.4);
+            padding: 8px 16px;
+            border-radius: 40px;
+            border: 1px solid var(--border-dim);
+            display: flex;
+            gap: 12px;
+            font-size: 12px;
+        }
+
+        /* ===== بطاقات الإحصائيات (الأهم للجوال) ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin: 8px 0;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--border-dim);
+            border-bottom: 3px solid var(--gold);
+            border-radius: 24px;
+            padding: 16px 14px;
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .stat-title {
+            font-size: 12px;
+            color: var(--text-dim);
+            font-weight: 600;
+        }
+
+        .stat-icon {
+            width: 36px;
+            height: 36px;
+            background: rgba(212, 175, 55, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gold);
+            font-size: 18px;
+        }
+
+        .stat-value {
+            font-size: 26px;
+            font-weight: 800;
+            color: white;
+            line-height: 1;
+        }
+
+        /* ===== البطاقات الرئيسية ===== */
+        .card {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-dim);
+            border-radius: 32px;
+            padding: 20px 18px;
+            box-shadow: var(--shadow);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-dim);
+            padding-bottom: 16px;
+        }
+
+        .card-header h2 {
+            font-size: 20px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-header h2 i {
+            color: var(--gold);
+            background: rgba(212, 175, 55, 0.1);
+            padding: 8px;
+            border-radius: 14px;
+        }
+
+        .badge {
+            background: rgba(212, 175, 55, 0.15);
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-size: 13px;
+            color: var(--gold-light);
+            border: 1px solid var(--border-dim);
+        }
+
+        /* ===== النماذج ===== */
+        .form {
+            background: rgba(0,0,0,0.25);
+            border-radius: 24px;
+            padding: 20px;
+            margin-bottom: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .form-group {
+            width: 100%;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            color: var(--text-dim);
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(0,0,0,0.4);
+            border: 1.5px solid var(--border-dim);
+            border-radius: 20px;
+            font-size: 15px;
+            color: white;
+        }
+
+        .form-group input:focus {
+            border-color: var(--gold);
+            outline: none;
+        }
+
+        .btn {
+            padding: 14px 20px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 15px;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(145deg, #d4af37, #b8961c);
+            color: #0a121c;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--gold);
+            color: var(--gold);
+        }
+
+        /* ===== الجداول (تمرير أفقي) ===== */
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 550px;
+        }
+
+        th {
+            text-align: right;
+            padding: 16px 12px;
+            color: var(--gold);
+            font-size: 13px;
+            border-bottom: 1px solid var(--border-dim);
+        }
+
+        td {
+            padding: 16px 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            color: var(--text-light);
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 12px;
+            background: rgba(179, 65, 65, 0.2);
+            color: #ffb3b3;
+        }
+
+        .status.paid {
+            background: rgba(14, 124, 90, 0.2);
+            color: #b0e5c0;
+        }
+
+        .action-btn {
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid var(--border-dim);
+            padding: 8px 12px;
+            border-radius: 14px;
+            color: var(--gold);
+            cursor: pointer;
+        }
+
+        .delete-btn {
+            background: transparent;
+            border: none;
+            color: #888;
+            padding: 8px;
+            cursor: pointer;
+        }
+
+        /* ===== سجل المعاملات ===== */
+        .transactions-list {
+            max-height: 280px;
+            overflow-y: auto;
+        }
+
+        .transaction-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .tx-icon {
+            width: 44px;
+            height: 44px;
+            background: rgba(212, 175, 55, 0.1);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gold);
+            flex-shrink: 0;
+        }
+
+        /* ===== التوقيع ===== */
+        .signature {
+            margin-top: 30px;
+            padding: 24px 20px;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(10px);
+            border-radius: 40px;
+            border: 1px solid var(--border-dim);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .dev, .manager {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .dev-icon, .manager-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            flex-shrink: 0;
+        }
+
+        .dev-icon {
+            background: linear-gradient(145deg, #d4af37, #9e7e2b);
+            color: #0a121c;
+        }
+
+        .manager-icon {
+            background: rgba(212, 175, 55, 0.1);
+            border: 2px dashed var(--gold);
+            color: var(--gold);
+        }
+
+        .dev-info h3 {
+            font-size: 22px;
+            font-weight: 900;
+            color: white;
+        }
+
+        .dev-info h3 span, .manager-info h4 span {
+            color: var(--gold);
+        }
+
+        .manager-info h4 {
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .dev-info p, .manager-info p {
+            color: var(--text-dim);
+            font-size: 12px;
+        }
+
+        .alert {
+            background: rgba(179, 65, 65, 0.2);
+            border: 1px solid #b34141;
+            border-radius: 24px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        /* تحسينات للجوال الصغير */
+        @media (max-width: 480px) {
+            .header { flex-direction: column; align-items: stretch; }
+            .datetime { justify-content: space-around; }
+            .stat-value { font-size: 22px; }
+            .title h1 { font-size: 22px; }
+        }
+    </style>
 </head>
 <body>
-    <!-- خلفية إدارية فاخرة (مضبوطة للهاتف) -->
-    <div class="executive-bg">
-        <div class="bg-gradient"></div>
-        <div class="bg-pattern"></div>
-        <div class="bg-abstract"></div>
-        <div class="corner-accent"></div>
-        <div class="corner-accent-right"></div>
-    </div>
-
+    <div class="bg-gradient"></div>
+    
     <div class="container">
-        <!-- الهيدر التنفيذي -->
-        <div class="executive-header">
-            <div class="brand-executive">
-                <div class="brand-emblem">
+        <!-- الهيدر -->
+        <div class="header">
+            <div class="brand">
+                <div class="crown">
                     <i class="fas fa-crown"></i>
                 </div>
-                <div class="brand-title">
+                <div class="title">
                     <h1>مدير الدار</h1>
-                    <span><i class="fas fa-shield-alt"></i> النظام المالي v2.0</span>
+                    <span><i class="fas fa-shield-alt"></i> النظام التنفيذي</span>
                 </div>
             </div>
-            <div class="date-time-executive">
-                <div class="date-item">
-                    <i class="fas fa-calendar-alt"></i>
-                    <span id="currentDate">...</span>
-                </div>
-                <div class="time-item">
-                    <i class="fas fa-clock"></i>
-                    <span id="currentTime">...</span>
-                </div>
+            <div class="datetime">
+                <div><i class="fas fa-calendar-alt" style="color: var(--gold);"></i> <span id="currentDate">...</span></div>
+                <div><i class="fas fa-clock" style="color: var(--gold);"></i> <span id="currentTime">...</span></div>
             </div>
         </div>
 
-        <!-- بطاقات الإحصائيات الفاخرة -->
-        <div class="stats-executive" id="statsGrid"></div>
+        <!-- بطاقات الإحصائيات -->
+        <div class="stats-grid" id="statsGrid"></div>
 
-        <!-- تنبيه ذكي (يظهر فقط عند تجاوز المصاريف) -->
-        <div id="expenseAlert" class="glass-dark-card" style="display: none; margin-bottom: 20px; background: rgba(179, 58, 74, 0.2); border-color: var(--ruby-500); padding: 16px 20px;">
-            <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
-                <div style="background: rgba(179, 58, 74, 0.3); padding: 12px; border-radius: 18px;">
-                    <i class="fas fa-exclamation-triangle" style="color: var(--ruby-400); font-size: 24px;"></i>
+        <!-- تنبيه المصاريف -->
+        <div id="expenseAlert" style="display: none;">
+            <div class="alert">
+                <div style="background: rgba(179,65,65,0.3); padding: 12px; border-radius: 16px;">
+                    <i class="fas fa-exclamation-triangle" style="color: #ff8a8a; font-size: 22px;"></i>
                 </div>
                 <div>
-                    <h4 style="color: white; font-weight: 800; margin-bottom: 4px; font-size: 18px;">تنبيه الميزانية</h4>
-                    <p style="color: var(--gray-300); font-size: 14px;">المصاريف تتجاوز المتحصل. اتخذ إجراءً.</p>
+                    <h4 style="color: white; font-weight: 800;">تنبيه الميزانية</h4>
+                    <p style="color: var(--text-dim); font-size: 13px;">المصاريف أكثر من المتحصل!</p>
                 </div>
             </div>
         </div>
 
-        <!-- الشبكة الرئيسية (تتحول إلى عمودي في الهاتف) -->
-        <div class="dashboard-grid">
-            <!-- بطاقة إدارة الأعضاء -->
-            <div class="glass-dark-card">
-                <div class="card-header-luxury">
-                    <h2><i class="fas fa-users"></i> إدارة الأعضاء</h2>
-                    <span class="member-stats-badge" id="memberStats">0/0</span>
-                </div>
-
-                <!-- نموذج إضافة عضو (عمودي في الهاتف) -->
-                <div class="form-luxury">
-                    <div class="form-group-luxury">
-                        <label><i class="fas fa-user-tie"></i> اسم العضو</label>
-                        <input type="text" id="memberNameInput" placeholder="الاسم الكامل" autocomplete="off">
-                    </div>
-                    <button class="btn-luxury" id="addMemberBtn">
-                        <i class="fas fa-plus-circle"></i>
-                        إضافة
-                    </button>
-                </div>
-
-                <!-- جدول الأعضاء مع تمرير أفقي للهواتف الصغيرة -->
-                <div class="table-responsive">
-                    <table class="table-luxury">
-                        <thead>
-                            <tr>
-                                <th>العضو</th>
-                                <th>الحالة</th>
-                                <th>تاريخ الدفع</th>
-                                <th>الإجراءات</th>
-                            </tr>
-                        </thead>
-                        <tbody id="membersTableBody"></tbody>
-                    </table>
-                </div>
+        <!-- الأعضاء والمصاريف -->
+        <div class="card">
+            <div class="card-header">
+                <h2><i class="fas fa-users"></i> إدارة الأعضاء</h2>
+                <span class="badge" id="memberStats">0/0</span>
             </div>
-
-            <!-- بطاقة إدارة المصاريف -->
-            <div class="glass-dark-card">
-                <div class="card-header-luxury">
-                    <h2><i class="fas fa-file-invoice-dollar"></i> إدارة المصاريف</h2>
-                    <span class="expense-total-badge" id="expenseTotalBadge">0 ₪</span>
+            <div class="form">
+                <div class="form-group">
+                    <label><i class="fas fa-user-tie"></i> اسم العضو</label>
+                    <input type="text" id="memberNameInput" placeholder="أدخل الاسم الكامل">
                 </div>
+                <button class="btn" id="addMemberBtn">
+                    <i class="fas fa-plus-circle"></i> إضافة عضو
+                </button>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr><th>العضو</th><th>الحالة</th><th>تاريخ الدفع</th><th></th></tr>
+                    </thead>
+                    <tbody id="membersTableBody"></tbody>
+                </table>
+            </div>
+        </div>
 
-                <!-- نموذج إضافة مصروف (عمودي في الهاتف) -->
-                <div class="form-luxury">
-                    <div class="form-group-luxury">
-                        <label><i class="fas fa-tag"></i> اسم المصروف</label>
-                        <input type="text" id="expenseNameInput" placeholder="مثال: الكهرباء">
-                    </div>
-                    <div class="form-group-luxury">
-                        <label><i class="fas fa-coins"></i> المبلغ (₪)</label>
-                        <input type="number" id="expenseAmountInput" placeholder="0.00">
-                    </div>
-                    <button class="btn-luxury" id="addExpenseBtn">
-                        <i class="fas fa-plus-circle"></i>
-                        إضافة
-                    </button>
+        <div class="card">
+            <div class="card-header">
+                <h2><i class="fas fa-file-invoice-dollar"></i> إدارة المصاريف</h2>
+                <span class="badge" id="expenseTotalBadge">0 ₪</span>
+            </div>
+            <div class="form">
+                <div class="form-group">
+                    <label><i class="fas fa-tag"></i> اسم المصروف</label>
+                    <input type="text" id="expenseNameInput" placeholder="مثال: الكهرباء">
                 </div>
-
-                <!-- جدول المصاريف -->
-                <div class="table-responsive">
-                    <table class="table-luxury">
-                        <thead>
-                            <tr>
-                                <th>البيان</th>
-                                <th>المبلغ</th>
-                                <th>التاريخ</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody id="expensesTableBody"></tbody>
-                    </table>
+                <div class="form-group">
+                    <label><i class="fas fa-coins"></i> المبلغ (₪)</label>
+                    <input type="number" id="expenseAmountInput" placeholder="0.00">
                 </div>
+                <button class="btn" id="addExpenseBtn">
+                    <i class="fas fa-plus-circle"></i> إضافة مصروف
+                </button>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr><th>البيان</th><th>المبلغ</th><th>التاريخ</th><th></th></tr>
+                    </thead>
+                    <tbody id="expensesTableBody"></tbody>
+                </table>
             </div>
         </div>
 
         <!-- سجل المعاملات -->
-        <div class="glass-dark-card transactions-panel">
-            <div class="card-header-luxury">
+        <div class="card">
+            <div class="card-header">
                 <h2><i class="fas fa-history"></i> سجل المعاملات</h2>
-                <button class="btn-luxury btn-outline" id="clearLogsBtn">
+                <button class="btn-outline btn" id="clearLogsBtn" style="padding: 10px 16px; font-size: 13px;">
                     <i class="fas fa-trash-alt"></i> مسح
                 </button>
             </div>
             <div id="transactionsList" class="transactions-list"></div>
         </div>
 
-        <!-- زر بدء شهر جديد (متمركز ومناسب للهاتف) -->
-        <div class="new-month-section">
-            <button class="btn-luxury btn-outline" id="newMonthBtn">
-                <i class="fas fa-calendar-plus"></i>
-                بدء شهر جديد - إعادة تعيين الدفع
-            </button>
-        </div>
+        <!-- بدء شهر جديد -->
+        <button class="btn btn-outline" id="newMonthBtn" style="margin: 8px 0 20px;">
+            <i class="fas fa-calendar-plus"></i> بدء شهر جديد - إعادة تعيين الدفع
+        </button>
 
-        <!-- ========== توقيع المبرمج ومدير القاعدة (متجاوب مع الهاتف) ========== -->
-        <div class="signature-area">
-            <div class="developer-signature">
-                <div class="dev-badge">
-                    <i class="fas fa-code"></i>
-                </div>
+        <!-- التوقيع -->
+        <div class="signature">
+            <div class="dev">
+                <div class="dev-icon"><i class="fas fa-code"></i></div>
                 <div class="dev-info">
                     <h3>جـ<span>و</span>اد شـ<span>اه</span>ين</h3>
-                    <p><i class="fas fa-crown" style="color: var(--gold-500);"></i> مطور أنظمة مالية</p>
-                    <p class="copyright-text"><i class="fas fa-certificate"></i> جواد شاهين © 2026</p>
+                    <p><i class="fas fa-crown" style="color: var(--gold);"></i> مطور الأنظمة المالية</p>
+                    <p style="font-size: 11px;"><i class="fas fa-certificate"></i> جواد شاهين © 2026</p>
                 </div>
             </div>
-            
-            <div class="manager-signature">
-                <div class="manager-badge">
-                    <i class="fas fa-user-tie"></i>
-                </div>
+            <div class="manager">
+                <div class="manager-icon"><i class="fas fa-user-tie"></i></div>
                 <div class="manager-info">
                     <h4><span>نعمان</span> | مدير القاعدة</h4>
-                    <p><i class="fas fa-check-circle" style="color: var(--emerald-400);"></i> الإشراف المالي</p>
-                    <p class="location-text"><i class="fas fa-map-marker-alt"></i> قاعدة الدار</p>
+                    <p><i class="fas fa-check-circle" style="color: #1aa179;"></i> الإدارة التنفيذية</p>
+                    <p style="font-size: 11px;"><i class="fas fa-map-marker-alt"></i> قاعدة الدار - النظام المركزي</p>
                 </div>
-            </div>
-            
-            <div class="version-info">
-                <i class="fas fa-database"></i>
-                <span>v2.0.0</span>
-                <span class="separator"></span>
-                <i class="fas fa-shield-alt"></i>
-                <span>موثوق</span>
             </div>
         </div>
     </div>
 
-    <!-- ربط ملف JavaScript الخارجي (script.js) -->
-    <script src="script.js"></script>
+    <script>
+        // تفعيل العربية
+        moment.locale('ar');
+
+        // ================ مدير الدار - كود كامل بالداخل ================
+        class DarManager {
+            constructor() {
+                this.MEMBER_FEE = 30;
+                this.STORAGE_KEYS = {
+                    MEMBERS: 'dar_members_phone',
+                    EXPENSES: 'dar_expenses_phone',
+                    TRANSACTIONS: 'dar_transactions_phone'
+                };
+
+                this.members = this.loadData(this.STORAGE_KEYS.MEMBERS, this.getDefaultMembers());
+                this.expenses = this.loadData(this.STORAGE_KEYS.EXPENSES, this.getDefaultExpenses());
+                this.transactions = this.loadData(this.STORAGE_KEYS.TRANSACTIONS, []);
+
+                this.init();
+            }
+
+            getDefaultMembers() {
+                return [
+                    { id: '1', name: 'أحمد الموسى', paid: true, lastPaymentDate: '2026-02-10T10:30:00' },
+                    { id: '2', name: 'سارة خالد', paid: false, lastPaymentDate: null },
+                    { id: '3', name: 'محمد عمر', paid: true, lastPaymentDate: '2026-02-09T14:20:00' },
+                    { id: '4', name: 'نور الهدى', paid: false, lastPaymentDate: null },
+                    { id: '5', name: 'ياسر القحطاني', paid: true, lastPaymentDate: '2026-02-08T09:15:00' }
+                ];
+            }
+
+            getDefaultExpenses() {
+                return [
+                    { id: 'e1', name: 'فاتورة الإنترنت', amount: 120, date: '2026-02-01T09:00:00' },
+                    { id: 'e2', name: 'الكهرباء', amount: 95, date: '2026-02-05T13:30:00' }
+                ];
+            }
+
+            loadData(key, def) {
+                let stored = localStorage.getItem(key);
+                return stored ? JSON.parse(stored) : def;
+            }
+
+            saveData(key, data) {
+                localStorage.setItem(key, JSON.stringify(data));
+            }
+
+            generateId() {
+                return Date.now() + '-' + Math.random().toString(36).substr(2, 6);
+            }
+
+            addTransaction(type, desc, amount) {
+                this.transactions.unshift({
+                    id: this.generateId(),
+                    type, description: desc, amount,
+                    date: new Date().toISOString()
+                });
+                if (this.transactions.length > 30) this.transactions = this.transactions.slice(0, 30);
+                this.saveData(this.STORAGE_KEYS.TRANSACTIONS, this.transactions);
+            }
+
+            togglePayment(id) {
+                let m = this.members.find(m => m.id === id);
+                if (m) {
+                    m.paid = !m.paid;
+                    m.lastPaymentDate = m.paid ? new Date().toISOString() : null;
+                    this.addTransaction('payment', `${m.paid ? 'دفع' : 'إلغاء'}: ${m.name}`, m.paid ? this.MEMBER_FEE : -this.MEMBER_FEE);
+                    this.saveData(this.STORAGE_KEYS.MEMBERS, this.members);
+                    this.renderAll();
+                }
+            }
+
+            addMember(name) {
+                if (!name.trim()) return false;
+                this.members.push({
+                    id: this.generateId(),
+                    name: name.trim(),
+                    paid: false,
+                    lastPaymentDate: null
+                });
+                this.addTransaction('member', `إضافة: ${name.trim()}`, 0);
+                this.saveData(this.STORAGE_KEYS.MEMBERS, this.members);
+                this.renderAll();
+                return true;
+            }
+
+            deleteMember(id) {
+                let m = this.members.find(m => m.id === id);
+                if (m) {
+                    this.members = this.members.filter(m => m.id !== id);
+                    this.addTransaction('member', `حذف: ${m.name}`, 0);
+                    this.saveData(this.STORAGE_KEYS.MEMBERS, this.members);
+                    this.renderAll();
+                }
+            }
+
+            addExpense(name, amount) {
+                if (!name.trim() || amount <= 0) return false;
+                this.expenses.push({
+                    id: this.generateId(),
+                    name: name.trim(),
+                    amount: Number(amount),
+                    date: new Date().toISOString()
+                });
+                this.addTransaction('expense', `مصروف: ${name.trim()}`, Number(amount));
+                this.saveData(this.STORAGE_KEYS.EXPENSES, this.expenses);
+                this.renderAll();
+                return true;
+            }
+
+            deleteExpense(id) {
+                let e = this.expenses.find(e => e.id === id);
+                if (e) {
+                    this.expenses = this.expenses.filter(e => e.id !== id);
+                    this.addTransaction('expense', `حذف: ${e.name}`, -e.amount);
+                    this.saveData(this.STORAGE_KEYS.EXPENSES, this.expenses);
+                    this.renderAll();
+                }
+            }
+
+            resetMonth() {
+                this.members.forEach(m => { m.paid = false; m.lastPaymentDate = null; });
+                this.addTransaction('reset', 'بدء شهر جديد', 0);
+                this.saveData(this.STORAGE_KEYS.MEMBERS, this.members);
+                this.renderAll();
+            }
+
+            clearTransactions() {
+                this.transactions = [];
+                this.saveData(this.STORAGE_KEYS.TRANSACTIONS, this.transactions);
+                this.renderTransactions();
+            }
+
+            getStats() {
+                let total = this.members.length;
+                let paid = this.members.filter(m => m.paid).length;
+                let collected = paid * this.MEMBER_FEE;
+                let expenses = this.expenses.reduce((s, e) => s + e.amount, 0);
+                return {
+                    total, paid, unpaid: total - paid,
+                    collected, expenses,
+                    balance: collected - expenses
+                };
+            }
+
+            renderAll() {
+                this.renderStats();
+                this.renderMembers();
+                this.renderExpenses();
+                this.renderTransactions();
+                this.checkAlert();
+                this.updateDateTime();
+            }
+
+            renderStats() {
+                let s = this.getStats();
+                let html = `
+                    <div class="stat-card"><div class="stat-header"><span class="stat-title">الأعضاء</span><div class="stat-icon"><i class="fas fa-users-crown"></i></div></div><div class="stat-value">${s.total}</div></div>
+                    <div class="stat-card"><div class="stat-header"><span class="stat-title">المدفوع</span><div class="stat-icon"><i class="fas fa-check-double"></i></div></div><div class="stat-value">${s.paid}/${s.total}</div></div>
+                    <div class="stat-card"><div class="stat-header"><span class="stat-title">المتأخر</span><div class="stat-icon"><i class="fas fa-clock"></i></div></div><div class="stat-value">${s.unpaid}</div></div>
+                    <div class="stat-card"><div class="stat-header"><span class="stat-title">المتحصل</span><div class="stat-icon"><i class="fas fa-sack-dollar"></i></div></div><div class="stat-value">${s.collected} ₪</div></div>
+                    <div class="stat-card"><div class="stat-header"><span class="stat-title">المصاريف</span><div class="stat-icon"><i class="fas fa-file-invoice"></i></div></div><div class="stat-value">${s.expenses} ₪</div></div>
+                    <div class="stat-card"><div class="stat-header"><span class="stat-title">الرصيد</span><div class="stat-icon"><i class="fas fa-scale-balanced"></i></div></div><div class="stat-value">${s.balance} ₪</div></div>
+                `;
+                document.getElementById('statsGrid').innerHTML = html;
+                document.getElementById('memberStats').innerText = `${s.paid} مدفوع / ${s.unpaid} متأخر`;
+                document.getElementById('expenseTotalBadge').innerText = `${s.expenses} ₪`;
+            }
+
+            renderMembers() {
+                let tbody = document.getElementById('membersTableBody');
+                if (!this.members.length) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:40px;">لا يوجد أعضاء</td></tr>';
+                    return;
+                }
+                let html = '';
+                this.members.forEach(m => {
+                    let cls = m.paid ? 'paid' : '';
+                    let txt = m.paid ? 'مدفوع' : 'غير مدفوع';
+                    let icon = m.paid ? 'fa-check-circle' : 'fa-hourglass-half';
+                    let date = m.lastPaymentDate ? moment(m.lastPaymentDate).format('YYYY/MM/DD HH:mm') : '—';
+                    html += `<tr>
+                        <td><div style="display:flex; align-items:center; gap:10px;"><div style="width:38px; height:38px; background:rgba(212,175,55,0.1); border-radius:12px; display:flex; align-items:center; justify-content:center; color:var(--gold);"><i class="fas fa-user-tie"></i></div><span style="font-weight:600;">${m.name}</span></div></td>
+                        <td><span class="status ${cls}"><i class="fas ${icon}"></i> ${txt}</span></td>
+                        <td><span style="font-size:12px;">${date}</span></td>
+                        <td><div style="display:flex; gap:5px;"><button class="action-btn" onclick="app.togglePayment('${m.id}')"><i class="fas fa-exchange-alt"></i></button><button class="delete-btn" onclick="app.deleteMember('${m.id}')"><i class="fas fa-trash-alt"></i></button></div></td>
+                    </tr>`;
+                });
+                tbody.innerHTML = html;
+            }
+
+            renderExpenses() {
+                let tbody = document.getElementById('expensesTableBody');
+                if (!this.expenses.length) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:40px;">لا توجد مصاريف</td></tr>';
+                    return;
+                }
+                let html = '';
+                this.expenses.forEach(e => {
+                    let date = moment(e.date).format('YYYY/MM/DD HH:mm');
+                    html += `<tr>
+                        <td><div style="display:flex; align-items:center; gap:10px;"><div style="width:38px; height:38px; background:rgba(212,175,55,0.1); border-radius:12px; display:flex; align-items:center; justify-content:center; color:var(--gold);"><i class="fas fa-file-invoice"></i></div><span>${e.name}</span></div></td>
+                        <td><span style="color:var(--gold); font-weight:700;">${e.amount} ₪</span></td>
+                        <td><span style="font-size:12px;">${date}</span></td>
+                        <td><button class="delete-btn" onclick="app.deleteExpense('${e.id}')"><i class="fas fa-trash-alt"></i></button></td>
+                    </tr>`;
+                });
+                tbody.innerHTML = html;
+            }
+
+            renderTransactions() {
+                let div = document.getElementById('transactionsList');
+                if (!this.transactions.length) {
+                    div.innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-dim);">لا توجد معاملات</div>';
+                    return;
+                }
+                let html = '';
+                this.transactions.slice(0, 15).forEach(t => {
+                    let icon = 'fa-circle';
+                    if (t.type === 'payment') icon = 'fa-credit-card';
+                    else if (t.type === 'expense') icon = 'fa-file-invoice-dollar';
+                    else if (t.type === 'reset') icon = 'fa-calendar';
+                    else if (t.type === 'member') icon = 'fa-user-plus';
+                    let date = moment(t.date).format('YYYY/MM/DD HH:mm');
+                    html += `<div class="transaction-item">
+                        <div class="tx-icon"><i class="fas ${icon}"></i></div>
+                        <div style="flex:1;"><div style="display:flex; justify-content:space-between;"><span style="font-weight:600;">${t.description}</span>${t.amount !== 0 ? `<span style="color:${t.amount>0?'#1aa179':'#b34141'};">${t.amount>0?'+':''}${t.amount} ₪</span>` : ''}</div><div><span style="font-size:11px; color:var(--text-dim);"><i class="fas fa-clock"></i> ${date}</span></div></div>
+                    </div>`;
+                });
+                div.innerHTML = html;
+            }
+
+            checkAlert() {
+                let s = this.getStats();
+                let a = document.getElementById('expenseAlert');
+                a.style.display = s.expenses > s.collected ? 'block' : 'none';
+            }
+
+            updateDateTime() {
+                let n = moment();
+                document.getElementById('currentDate').innerText = n.format('dddd، D MMMM YYYY');
+                document.getElementById('currentTime').innerText = n.format('HH:mm:ss');
+            }
+
+            init() {
+                this.renderAll();
+                setInterval(() => this.updateDateTime(), 1000);
+                
+                document.getElementById('addMemberBtn').onclick = () => {
+                    let inp = document.getElementById('memberNameInput');
+                    this.addMember(inp.value);
+                    inp.value = '';
+                };
+                document.getElementById('addExpenseBtn').onclick = () => {
+                    let n = document.getElementById('expenseNameInput');
+                    let a = document.getElementById('expenseAmountInput');
+                    this.addExpense(n.value, a.value);
+                    n.value = ''; a.value = '';
+                };
+                document.getElementById('newMonthBtn').onclick = () => {
+                    if (confirm('بدء شهر جديد؟')) this.resetMonth();
+                };
+                document.getElementById('clearLogsBtn').onclick = () => {
+                    if (confirm('مسح السجل؟')) this.clearTransactions();
+                };
+            }
+        }
+
+        // بدء التطبيق
+        const app = new DarManager();
+        window.app = app; // عشان الأزرار تشتغل
+    </script>
 </body>
 </html>
