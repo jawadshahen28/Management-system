@@ -1,7 +1,8 @@
+// ========== script.js ==========
 // تفعيل اللغة العربية
 moment.locale('ar');
 
-// ============ مدير الدار التنفيذي ============
+// ============ مدير الدار التنفيذي - متوافق مع الهاتف ومحسن ============
 class DarExecutiveManager {
     constructor() {
         this.MEMBER_FEE = 30;
@@ -18,7 +19,6 @@ class DarExecutiveManager {
         this.init();
     }
 
-    // البيانات الافتراضية الفاخرة
     getDefaultMembers() {
         return [
             { id: '1', name: 'أحمد الموسى', paid: true, lastPaymentDate: '2026-02-10T10:30:00' },
@@ -66,7 +66,7 @@ class DarExecutiveManager {
     }
 
     generateId() {
-        return Date.now() + '-' + Math.random().toString(36).substr(2, 12);
+        return Date.now() + '-' + Math.random().toString(36).substr(2, 8);
     }
 
     addTransaction(type, description, amount, relatedId = null) {
@@ -89,7 +89,6 @@ class DarExecutiveManager {
         const member = this.members.find(m => m.id === memberId);
         if (member) {
             member.paid = !member.paid;
-            
             if (member.paid) {
                 member.lastPaymentDate = new Date().toISOString();
                 this.addTransaction('payment', `دفع الاشتراك: ${member.name}`, this.MEMBER_FEE, memberId);
@@ -97,14 +96,13 @@ class DarExecutiveManager {
                 member.lastPaymentDate = null;
                 this.addTransaction('payment', `إلغاء دفع: ${member.name}`, -this.MEMBER_FEE, memberId);
             }
-            
             this.saveData(this.STORAGE_KEYS.MEMBERS, this.members);
             this.renderAll();
         }
     }
 
     addMember(name) {
-        if (!name.trim()) return false;
+        if (!name || !name.trim()) return false;
         const newMember = {
             id: this.generateId(),
             name: name.trim(),
@@ -112,7 +110,7 @@ class DarExecutiveManager {
             lastPaymentDate: null
         };
         this.members.push(newMember);
-        this.addTransaction('member', `إضافة عضو جديد: ${name.trim()}`, 0, newMember.id);
+        this.addTransaction('member', `إضافة عضو: ${name.trim()}`, 0, newMember.id);
         this.saveData(this.STORAGE_KEYS.MEMBERS, this.members);
         this.renderAll();
         return true;
@@ -129,7 +127,7 @@ class DarExecutiveManager {
     }
 
     addExpense(name, amount) {
-        if (!name.trim() || !amount || amount <= 0) return false;
+        if (!name || !name.trim() || !amount || amount <= 0) return false;
         const newExpense = {
             id: this.generateId(),
             name: name.trim(),
@@ -137,7 +135,7 @@ class DarExecutiveManager {
             date: new Date().toISOString()
         };
         this.expenses.push(newExpense);
-        this.addTransaction('expense', `مصروف جديد: ${name.trim()}`, Number(amount), newExpense.id);
+        this.addTransaction('expense', `مصروف: ${name.trim()}`, Number(amount), newExpense.id);
         this.saveData(this.STORAGE_KEYS.EXPENSES, this.expenses);
         this.renderAll();
         return true;
@@ -158,7 +156,7 @@ class DarExecutiveManager {
             member.paid = false;
             member.lastPaymentDate = null;
         });
-        this.addTransaction('reset', 'بدء شهر جديد - إعادة تعيين حالات الدفع', 0);
+        this.addTransaction('reset', 'بدء شهر جديد - إعادة تعيين الدفع', 0);
         this.saveData(this.STORAGE_KEYS.MEMBERS, this.members);
         this.renderAll();
     }
@@ -177,18 +175,8 @@ class DarExecutiveManager {
         const totalExpenses = this.expenses.reduce((sum, e) => sum + e.amount, 0);
         const remainingBalance = collectedAmount - totalExpenses;
         const unpaidCount = totalMembers - paidCount;
-        const paymentRate = totalMembers > 0 ? (paidCount / totalMembers * 100).toFixed(1) : 0;
 
-        return {
-            totalMembers,
-            paidCount,
-            unpaidCount,
-            expectedAmount,
-            collectedAmount,
-            totalExpenses,
-            remainingBalance,
-            paymentRate
-        };
+        return { totalMembers, paidCount, unpaidCount, expectedAmount, collectedAmount, totalExpenses, remainingBalance };
     }
 
     renderAll() {
@@ -203,9 +191,8 @@ class DarExecutiveManager {
     renderStats() {
         const stats = this.getStats();
         const statsGrid = document.getElementById('statsGrid');
-        
         const cards = [
-            { title: 'إجمالي الأعضاء', value: stats.totalMembers, icon: 'fa-users-crown', suffix: '' },
+            { title: 'الأعضاء', value: stats.totalMembers, icon: 'fa-users-crown', suffix: '' },
             { title: 'المدفوع', value: stats.paidCount, icon: 'fa-check-double', suffix: `/${stats.totalMembers}` },
             { title: 'المتأخر', value: stats.unpaidCount, icon: 'fa-clock', suffix: '' },
             { title: 'المتحصل', value: stats.collectedAmount, icon: 'fa-sack-dollar', suffix: '₪' },
@@ -215,22 +202,17 @@ class DarExecutiveManager {
 
         let html = '';
         cards.forEach((card, index) => {
-            html += `
-                <div class="stat-luxury">
-                    <div class="stat-header">
-                        <span class="stat-title">${card.title}</span>
-                        <div class="stat-icon-luxury">
-                            <i class="fas ${card.icon}"></i>
+            html += `<div class="stat-luxury">
+                        <div class="stat-header">
+                            <span class="stat-title">${card.title}</span>
+                            <div class="stat-icon-luxury"><i class="fas ${card.icon}"></i></div>
                         </div>
-                    </div>
-                    <div class="stat-value-luxury stat-${index}">${card.value}${card.suffix}</div>
-                </div>
-            `;
+                        <div class="stat-value-luxury stat-${index}">${card.value}${card.suffix}</div>
+                    </div>`;
         });
-
         statsGrid.innerHTML = html;
 
-        // إضافة تأثير التحديث
+        // تأثير التحديث
         for (let i = 0; i < 6; i++) {
             const el = document.querySelector(`.stat-${i}`);
             if (el) {
@@ -245,12 +227,8 @@ class DarExecutiveManager {
 
     renderMembersTable() {
         const tbody = document.getElementById('membersTableBody');
-        
         if (this.members.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 48px; color: var(--gray-400);">
-                <i class="fas fa-users-slash" style="font-size: 48px; margin-bottom: 16px; display: block;"></i>
-                لا يوجد أعضاء
-            </td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:40px; color:var(--gray-400);"><i class="fas fa-users-slash" style="font-size:40px; display:block; margin-bottom:12px;"></i> لا يوجد أعضاء</td></tr>`;
             return;
         }
 
@@ -261,123 +239,53 @@ class DarExecutiveManager {
             const paidIcon = member.paid ? 'fa-check-circle' : 'fa-hourglass-half';
             const paymentDate = member.lastPaymentDate ? moment(member.lastPaymentDate).format('YYYY/MM/DD HH:mm') : '—';
             
-            html += `
-                <tr>
-                    <td>
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <div style="width: 44px; height: 44px; background: rgba(199, 162, 59, 0.1); border-radius: 14px; display: flex; align-items: center; justify-content: center; color: var(--gold-400);">
-                                <i class="fas fa-user-tie"></i>
-                            </div>
-                            <div>
-                                <div style="font-weight: 700; color: white;">${member.name}</div>
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        <span class="status-chip ${paidClass}">
-                            <i class="fas ${paidIcon}"></i>
-                            ${paidText}
-                        </span>
-                    </td>
-                    <td>
-                        <div style="display: flex; flex-direction: column;">
-                            <span style="font-size: 13px; color: var(--gray-300);">${paymentDate}</span>
-                        </div>
-                    </td>
-                    <td>
-                        <div style="display: flex; gap: 8px;">
-                            <button class="btn-toggle" data-id="${member.id}" style="background: rgba(199, 162, 59, 0.1); border: 1px solid rgba(199, 162, 59, 0.3); padding: 10px 16px; border-radius: 12px; color: var(--gold-400); cursor: pointer;">
-                                <i class="fas fa-exchange-alt"></i>
-                            </button>
-                            <button class="delete-btn" data-id="${member.id}" style="background: transparent; border: none; color: var(--gray-500); padding: 10px; border-radius: 12px; cursor: pointer;">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            `;
+            html += `<tr>
+                        <td><div style="display:flex; align-items:center; gap:10px;"><div style="width:40px; height:40px; background:rgba(199,162,59,0.1); border-radius:12px; display:flex; align-items:center; justify-content:center; color:var(--gold-400);"><i class="fas fa-user-tie"></i></div><div style="font-weight:600; color:white;">${member.name}</div></div></td>
+                        <td><span class="status-chip ${paidClass}"><i class="fas ${paidIcon}"></i> ${paidText}</span></td>
+                        <td><span style="font-size:13px; color:var(--gray-300);">${paymentDate}</span></td>
+                        <td><div style="display:flex; gap:6px;">
+                                <button class="btn-toggle" data-id="${member.id}"><i class="fas fa-exchange-alt"></i></button>
+                                <button class="delete-btn" data-id="${member.id}"><i class="fas fa-trash-alt"></i></button>
+                            </div></td>
+                    </tr>`;
         });
-
         tbody.innerHTML = html;
 
-        // إضافة event listeners
         tbody.querySelectorAll('.btn-toggle').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                this.togglePayment(btn.dataset.id);
-            });
+            btn.addEventListener('click', (e) => { e.preventDefault(); this.togglePayment(btn.dataset.id); });
         });
-
         tbody.querySelectorAll('.delete-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                if (confirm('هل أنت متأكد من حذف هذا العضو؟')) {
-                    this.deleteMember(btn.dataset.id);
-                }
-            });
+            btn.addEventListener('click', (e) => { e.preventDefault(); if (confirm('حذف العضو؟')) this.deleteMember(btn.dataset.id); });
         });
     }
 
     renderExpensesTable() {
         const tbody = document.getElementById('expensesTableBody');
-        
         if (this.expenses.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 48px; color: var(--gray-400);">
-                <i class="fas fa-receipt" style="font-size: 48px; margin-bottom: 16px; display: block;"></i>
-                لا توجد مصاريف
-            </td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:40px; color:var(--gray-400);"><i class="fas fa-receipt" style="font-size:40px; display:block; margin-bottom:12px;"></i> لا توجد مصاريف</td></tr>`;
             return;
         }
 
         let html = '';
         this.expenses.forEach(expense => {
             const expenseDate = moment(expense.date).format('YYYY/MM/DD HH:mm');
-            
-            html += `
-                <tr>
-                    <td>
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <div style="width: 44px; height: 44px; background: rgba(199, 162, 59, 0.1); border-radius: 14px; display: flex; align-items: center; justify-content: center; color: var(--gold-400);">
-                                <i class="fas fa-file-invoice"></i>
-                            </div>
-                            <span style="color: white; font-weight: 600;">${expense.name}</span>
-                        </div>
-                    </td>
-                    <td>
-                        <span style="font-weight: 700; color: var(--gold-400);">${expense.amount} ₪</span>
-                    </td>
-                    <td>
-                        <span style="font-size: 13px; color: var(--gray-300);">${expenseDate}</span>
-                    </td>
-                    <td>
-                        <button class="expense-delete" data-id="${expense.id}" style="background: transparent; border: none; color: var(--gray-500); padding: 10px; border-radius: 12px; cursor: pointer;">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-                    </td>
-                </tr>
-            `;
+            html += `<tr>
+                        <td><div style="display:flex; align-items:center; gap:10px;"><div style="width:40px; height:40px; background:rgba(199,162,59,0.1); border-radius:12px; display:flex; align-items:center; justify-content:center; color:var(--gold-400);"><i class="fas fa-file-invoice"></i></div><span style="color:white; font-weight:600;">${expense.name}</span></div></td>
+                        <td><span style="font-weight:700; color:var(--gold-400);">${expense.amount} ₪</span></td>
+                        <td><span style="font-size:13px; color:var(--gray-300);">${expenseDate}</span></td>
+                        <td><button class="expense-delete" data-id="${expense.id}"><i class="fas fa-trash-alt"></i></button></td>
+                    </tr>`;
         });
-
         tbody.innerHTML = html;
-
         tbody.querySelectorAll('.expense-delete').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                if (confirm('هل أنت متأكد من حذف هذا المصروف؟')) {
-                    this.deleteExpense(btn.dataset.id);
-                }
-            });
+            btn.addEventListener('click', (e) => { e.preventDefault(); if (confirm('حذف المصروف؟')) this.deleteExpense(btn.dataset.id); });
         });
     }
 
     renderTransactions() {
         const list = document.getElementById('transactionsList');
-        
         if (this.transactions.length === 0) {
-            list.innerHTML = `<div style="text-align: center; padding: 48px; color: var(--gray-400);">
-                <i class="fas fa-history" style="font-size: 48px; margin-bottom: 16px; display: block;"></i>
-                لا توجد معاملات
-            </div>`;
+            list.innerHTML = `<div style="text-align:center; padding:40px; color:var(--gray-400);"><i class="fas fa-history" style="font-size:48px; display:block; margin-bottom:16px;"></i> لا توجد معاملات</div>`;
             return;
         }
 
@@ -385,40 +293,24 @@ class DarExecutiveManager {
         this.transactions.slice(0, 20).forEach(trans => {
             const date = moment(trans.date).format('YYYY/MM/DD HH:mm');
             let icon = 'fa-circle';
-            
             if (trans.type === 'payment') icon = 'fa-credit-card';
             else if (trans.type === 'expense') icon = 'fa-file-invoice-dollar';
             else if (trans.type === 'reset') icon = 'fa-calendar';
             else if (trans.type === 'member') icon = 'fa-user-plus';
 
-            html += `
-                <div class="transaction-item">
-                    <div class="transaction-icon">
-                        <i class="fas ${icon}"></i>
-                    </div>
-                    <div style="flex: 1;">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <span style="color: white; font-weight: 600;">${trans.description}</span>
-                            ${trans.amount !== 0 ? `<span style="font-weight: 700; color: ${trans.amount > 0 ? 'var(--emerald-400)' : 'var(--ruby-400)'};">${trans.amount > 0 ? '+' : ''}${trans.amount} ₪</span>` : ''}
-                        </div>
-                        <div style="margin-top: 4px;">
-                            <span style="font-size: 12px; color: var(--gray-400);"><i class="fas fa-clock"></i> ${date}</span>
-                        </div>
-                    </div>
-                </div>
-            `;
+            html += `<div class="transaction-item">
+                        <div class="transaction-icon"><i class="fas ${icon}"></i></div>
+                        <div style="flex:1;"><div style="display:flex; justify-content:space-between; align-items:center;"><span style="color:white; font-weight:600;">${trans.description}</span>${trans.amount !== 0 ? `<span style="font-weight:700; color:${trans.amount > 0 ? 'var(--emerald-400)' : 'var(--ruby-400)'};">${trans.amount > 0 ? '+' : ''}${trans.amount} ₪</span>` : ''}</div><div style="margin-top:4px;"><span style="font-size:12px; color:var(--gray-400);"><i class="fas fa-clock"></i> ${date}</span></div></div>
+                    </div>`;
         });
-
         list.innerHTML = html;
     }
 
     checkExpenseAlert() {
         const stats = this.getStats();
         const alertBox = document.getElementById('expenseAlert');
-        if (stats.totalExpenses > stats.collectedAmount) {
-            alertBox.style.display = 'block';
-        } else {
-            alertBox.style.display = 'none';
+        if (alertBox) {
+            alertBox.style.display = stats.totalExpenses > stats.collectedAmount ? 'block' : 'none';
         }
     }
 
@@ -430,57 +322,38 @@ class DarExecutiveManager {
 
     init() {
         this.renderAll();
-        
-        // تحديث الوقت كل ثانية
         setInterval(() => this.updateDateTime(), 1000);
 
-        // Event Listeners
+        // مستمعي الأحداث
         document.getElementById('addMemberBtn').addEventListener('click', () => {
             const input = document.getElementById('memberNameInput');
-            if (this.addMember(input.value)) {
-                input.value = '';
-                input.focus();
-            }
+            if (this.addMember(input.value)) { input.value = ''; input.focus(); }
         });
 
         document.getElementById('addExpenseBtn').addEventListener('click', () => {
             const nameInput = document.getElementById('expenseNameInput');
             const amountInput = document.getElementById('expenseAmountInput');
             if (this.addExpense(nameInput.value, amountInput.value)) {
-                nameInput.value = '';
-                amountInput.value = '';
-                nameInput.focus();
+                nameInput.value = ''; amountInput.value = ''; nameInput.focus();
             }
         });
 
         document.getElementById('newMonthBtn').addEventListener('click', () => {
-            if (confirm('هل أنت متأكد من بدء شهر جديد؟ سيتم إعادة تعيين حالة الدفع لجميع الأعضاء.')) {
-                this.resetMonth();
-            }
+            if (confirm('بدء شهر جديد؟ إعادة تعيين حالات الدفع.')) this.resetMonth();
         });
 
         document.getElementById('clearLogsBtn').addEventListener('click', () => {
-            if (confirm('هل أنت متأكد من مسح سجل المعاملات؟')) {
-                this.clearTransactions();
-            }
+            if (confirm('مسح سجل المعاملات؟')) this.clearTransactions();
         });
 
-        // Enter key listeners
-        document.getElementById('memberNameInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') document.getElementById('addMemberBtn').click();
-        });
-
-        document.getElementById('expenseNameInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') document.getElementById('addExpenseBtn').click();
-        });
-
-        document.getElementById('expenseAmountInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') document.getElementById('addExpenseBtn').click();
-        });
+        // اختصارات Enter
+        document.getElementById('memberNameInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') document.getElementById('addMemberBtn').click(); });
+        document.getElementById('expenseNameInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') document.getElementById('addExpenseBtn').click(); });
+        document.getElementById('expenseAmountInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') document.getElementById('addExpenseBtn').click(); });
     }
 }
 
-// إطلاق التطبيق التنفيذي
+// بدء التطبيق عند تحميل الصفحة
 document.addEventListener('DOMContentLoaded', () => {
-    const app = new DarExecutiveManager();
+    new DarExecutiveManager();
 });
