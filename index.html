@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+    <title>مدير الدار - النظام المالي الذكي | جواد شاهين</title>
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cairo:wght@300;400;500;600;700;800&family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+    <!-- Moment.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/locale/ar.js"></script>
+</head>
+<body>
+    <!-- خلفية إدارية فاخرة -->
+    <div class="executive-bg">
+        <div class="bg-gradient"></div>
+        <div class="bg-pattern"></div>
+        <div class="bg-abstract"></div>
+        <div class="corner-accent"></div>
+        <div class="corner-accent-right"></div>
+    </div>
+
+    <div class="container">
+        <!-- الهيدر التنفيذي -->
+        <div class="executive-header">
+            <div class="brand-executive">
+                <div class="brand-emblem">
+                    <i class="fas fa-crown"></i>
+                </div>
+                <div class="brand-title">
+                    <h1>مدير الدار</h1>
+                    <span><i class="fas fa-shield-alt"></i> النظام المالي التنفيذي v2.0</span>
+                </div>
+            </div>
+            <div class="date-time-executive">
+                <div class="date-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span id="currentDate">...</span>
+                </div>
+                <div class="time-item">
+                    <i class="fas fa-clock"></i>
+                    <span id="currentTime">...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- بطاقات الإحصائيات الفاخرة -->
+        <div class="stats-executive" id="statsGrid"></div>
+
+        <!-- تنبيه ذكي -->
+        <div id="expenseAlert" class="glass-dark-card" style="display: none; margin-bottom: 28px; background: rgba(179, 58, 74, 0.15); border-color: var(--ruby-500);">
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <div style="background: rgba(179, 58, 74, 0.3); padding: 16px; border-radius: 20px;">
+                    <i class="fas fa-exclamation-triangle" style="color: var(--ruby-400); font-size: 28px;"></i>
+                </div>
+                <div>
+                    <h4 style="color: white; font-weight: 800; margin-bottom: 6px;">تنبيه الميزانية التنفيذي</h4>
+                    <p style="color: var(--gray-300);">إجمالي المصاريف يتجاوز المبلغ المحصل. يرجى اتخاذ الإجراءات اللازمة.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- الشبكة الرئيسية -->
+        <div class="dashboard-grid">
+            <!-- بطاقة إدارة الأعضاء -->
+            <div class="glass-dark-card">
+                <div class="card-header-luxury">
+                    <h2><i class="fas fa-users"></i> إدارة الأعضاء</h2>
+                    <span class="member-stats-badge" id="memberStats">0/0</span>
+                </div>
+
+                <!-- نموذج إضافة عضو -->
+                <div class="form-luxury">
+                    <div class="form-group-luxury">
+                        <label><i class="fas fa-user-tie"></i> اسم العضو الجديد</label>
+                        <input type="text" id="memberNameInput" placeholder="أدخل الاسم الكامل" autocomplete="off">
+                    </div>
+                    <button class="btn-luxury" id="addMemberBtn">
+                        <i class="fas fa-plus-circle"></i>
+                        إضافة عضو
+                    </button>
+                </div>
+
+                <!-- جدول الأعضاء -->
+                <div class="table-responsive">
+                    <table class="table-luxury">
+                        <thead>
+                            <tr>
+                                <th>العضو</th>
+                                <th>حالة الدفع</th>
+                                <th>تاريخ الدفع</th>
+                                <th>العمليات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="membersTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- بطاقة إدارة المصاريف -->
+            <div class="glass-dark-card">
+                <div class="card-header-luxury">
+                    <h2><i class="fas fa-file-invoice-dollar"></i> إدارة المصاريف</h2>
+                    <span class="expense-total-badge" id="expenseTotalBadge">0 ₪</span>
+                </div>
+
+                <!-- نموذج إضافة مصروف -->
+                <div class="form-luxury">
+                    <div class="form-group-luxury">
+                        <label><i class="fas fa-tag"></i> اسم المصروف</label>
+                        <input type="text" id="expenseNameInput" placeholder="مثال: فاتورة الكهرباء">
+                    </div>
+                    <div class="form-group-luxury">
+                        <label><i class="fas fa-coins"></i> المبلغ (₪)</label>
+                        <input type="number" id="expenseAmountInput" placeholder="0.00">
+                    </div>
+                    <button class="btn-luxury" id="addExpenseBtn">
+                        <i class="fas fa-plus-circle"></i>
+                        إضافة
+                    </button>
+                </div>
+
+                <!-- جدول المصاريف -->
+                <div class="table-responsive">
+                    <table class="table-luxury">
+                        <thead>
+                            <tr>
+                                <th>البيان</th>
+                                <th>المبلغ</th>
+                                <th>التاريخ</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="expensesTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- سجل المعاملات -->
+        <div class="glass-dark-card transactions-panel">
+            <div class="card-header-luxury">
+                <h2><i class="fas fa-history"></i> سجل المعاملات المالية</h2>
+                <button class="btn-luxury btn-outline" id="clearLogsBtn">
+                    <i class="fas fa-trash-alt"></i> مسح السجل
+                </button>
+            </div>
+            <div id="transactionsList" class="transactions-list"></div>
+        </div>
+
+        <!-- زر بدء شهر جديد -->
+        <div class="new-month-section">
+            <button class="btn-luxury btn-outline" id="newMonthBtn">
+                <i class="fas fa-calendar-plus"></i>
+                بدء شهر جديد - إعادة تعيين حالات الدفع
+            </button>
+        </div>
+
+        <!-- ========== توقيع المبرمج ومدير القاعدة ========== -->
+        <div class="signature-area">
+            <div class="developer-signature">
+                <div class="dev-badge">
+                    <i class="fas fa-code"></i>
+                </div>
+                <div class="dev-info">
+                    <h3>جـ<span>و</span>اد شـ<span>اه</span>ين</h3>
+                    <p><i class="fas fa-crown" style="color: var(--gold-500);"></i> مطور الأنظمة المالية المتقدمة</p>
+                    <p class="copyright-text"><i class="fas fa-certificate"></i> جواد شاهين © 2026 - جميع الحقوق محفوظة</p>
+                </div>
+            </div>
+            
+            <div class="manager-signature">
+                <div class="manager-badge">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <div class="manager-info">
+                    <h4><span>نعمان</span> | مدير القاعدة</h4>
+                    <p><i class="fas fa-check-circle" style="color: var(--emerald-400);"></i> الإدارة التنفيذية والإشراف المالي</p>
+                    <p class="location-text"><i class="fas fa-map-marker-alt"></i> قاعدة الدار - النظام المركزي</p>
+                </div>
+            </div>
+            
+            <div class="version-info">
+                <i class="fas fa-database"></i>
+                <span>الإصدار التنفيذي 2.0.0</span>
+                <span class="separator"></span>
+                <i class="fas fa-shield-alt"></i>
+                <span>نظام إدارة موثوق</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript File -->
+    <script src="script.js"></script>
+</body>
+</html>
